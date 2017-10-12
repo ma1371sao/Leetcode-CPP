@@ -1,3 +1,3 @@
-# Leetcode-1st
+# Leetcode
 C++ Leetcode
 https://leetcode.com/problemset/algorithms/
