@@ -1,52 +1,25 @@
 class Solution {
 public:
 	bool isMatch(string s, string p) {
-		int ls = s.length();
-		int lp = p.length();
-		if (ls == 0)
-		{
-			if (lp == 0)
-				return true;
-			else if (p[1] == '*')
-			{
-				if (isMatch(s, p.substr(2)))
-					return true;
-				else
-					return false;
-			}
-			else
-				return false;
+		vector<vector<bool>> dp(s.length() + 1, vector<bool>(p.length() + 1, false));
+		dp[0][0] = true;
+		for (int j = 0; j < p.length(); j++) {
+			if (p[j] == '*' && dp[0][j - 1])
+				dp[0][j + 1] = true;
 		}
-		if (lp == 0)
-			return false;
-		if (s[0] == p[0] || p[0] == '.')
-		{
-			if (p[1] == '*')
-				if (isMatch(s.substr(1), p))
-					return true;
-				else
-				{
-					if (isMatch(s, p.substr(2)))
-						return true;
-					else
-						return false;
+		for (int i = 0; i < s.length(); i++) {
+			for (int j = 0; j < p.length(); j++) {
+				if (s[i] == p[j] || p[j] == '.')
+					dp[i + 1][j + 1] = dp[i][j];
+				else if (p[j] == '*') {
+					if (s[i] != p[j - 1] && p[j - 1] != '.')
+						dp[i + 1][j + 1] = dp[i + 1][j - 1];
+					else {
+						dp[i + 1][j + 1] = (dp[i][j + 1] || dp[i][j] || dp[i + 1][j - 1]);
+					}
 				}
-			else
-				if (isMatch(s.substr(1), p.substr(1)))
-					return true;
-				else
-					return false;
+			}
 		}
-		else
-		{
-			if (p[1] == '*')
-				if (isMatch(s, p.substr(2)))
-					return true;
-				else
-					return false;
-			else
-				return false;
-		}
-		return true;
+		return dp[s.length()][p.length()];
 	}
 };
