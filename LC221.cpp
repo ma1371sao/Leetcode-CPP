@@ -1,41 +1,30 @@
 class Solution {
 public:
 	int maximalSquare(vector<vector<char>>& matrix) {
-		int row = matrix.size();
-		if (!row)    return 0;
-		int col = matrix[0].size();
-		if (!col)    return 0;
-		int dp[1000][1000];
-		int ans = 0;
-		for (int i = 0; i<row; i++)
-			memset(dp[i], 0, sizeof(dp[i]));
-		for (int i = 0; i<row; i++)
-			if (matrix[i][0] == '1')
-			{
-				ans = 1;
+		int r = matrix.size();
+		if (r == 0) return 0;
+		int c = matrix[0].size();
+		vector<vector<int>> dp(r, vector<int>(c, 0));
+		int maxLen = 0;
+		for (int i = 0; i < r; i++)
+			if (matrix[i][0] == '1') {
 				dp[i][0] = 1;
+				maxLen = 1;
 			}
-		for (int i = 0; i<col; i++)
-			if (matrix[0][i] == '1')
-			{
-				dp[0][i] = 1;
-				ans = 1;
+		for (int j = 0; j < c; j++)
+			if (matrix[0][j] == '1') {
+				dp[0][j] = 1;
+				maxLen = 1;
 			}
-		for (int r = 1; r<row; r++)
-			for (int c = 1; c<col; c++)
-			{
-				if (matrix[r][c] == '1')
-				{
-					int min = dp[r - 1][c];
-					if (dp[r][c - 1]<min)
-						min = dp[r][c - 1];
-					if (dp[r - 1][c - 1]<min)
-						min = dp[r - 1][c - 1];
-					dp[r][c] = min + 1;
-					if (dp[r][c]>ans)
-						ans = dp[r][c];
+		for (int i = 1; i < r; i++) {
+			for (int j = 1; j < c; j++) {
+				if (matrix[i][j] == '1') {
+					dp[i][j] = min(dp[i - 1][j], dp[i][j - 1]);
+					dp[i][j] = min(dp[i][j], dp[i - 1][j - 1]) + 1;
+					maxLen = max(dp[i][j], maxLen);
 				}
 			}
-		return ans*ans;
+		}
+		return maxLen * maxLen;
 	}
 };
