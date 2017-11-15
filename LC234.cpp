@@ -9,27 +9,34 @@
 class Solution {
 public:
 	bool isPalindrome(ListNode* head) {
-		if (head == NULL)
-			return true;
-		ListNode *p, *r_head, *pre;
-		p = head;
-		pre = NULL;
-		while (p)
-		{
-			ListNode *tmp = new ListNode(p->val);
-			tmp->next = pre;
-			pre = tmp;
-			if (p->next == NULL)
-				r_head = tmp;
-			p = p->next;
+		if (head == NULL || head->next == NULL) return true;
+		ListNode* slow = head;
+		ListNode* fast = head;
+		ListNode* pre;
+		while (fast && fast->next) {
+			pre = slow;
+			fast = fast->next->next;
+			slow = slow->next;
 		}
-		ListNode *q = r_head;
-		p = head;
-		for (; p; p = p->next, q = q->next)
-		{
-			if (p->val != q->val)
-				return false;
+		pre->next = reverseList(slow);
+		ListNode* forward = head;
+		ListNode* backward = pre->next;
+		while (forward != pre->next) {
+			if (forward->val != backward->val) return false;
+			forward = forward->next;
+			backward = backward->next;
 		}
 		return true;
+	}
+
+	ListNode* reverseList(ListNode* head) {
+		ListNode* pre = NULL;
+		while (head) {
+			ListNode* nxt = head->next;
+			head->next = pre;
+			pre = head;
+			head = nxt;
+		}
+		return pre;
 	}
 };
