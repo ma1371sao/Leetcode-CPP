@@ -1,57 +1,56 @@
 class Solution {
 public:
 	vector<pair<int, int>> getSkyline(vector<vector<int>>& buildings) {
-		vector<pair<int, int>> pts;
-		if (buildings.size() == 0)
-			return pts;
-		int n = buildings.size();
-		int rightSide = 0;
-		for (int i = 0; i < n; i++) {
-			rightSide = max(rightSide, buildings[i][1]);
-		}
+		vector<pair<int, int>> skyLine;
+		if (buildings.size() == 0) return skyLine;
 		unordered_map<int, int> height_right;
-		int preHeight = 0;
-		int height = 0;
-		int cur = 0;
-		priority_queue<int> maxHeight;
+		priority_queue<int> heights;
+		int i = 0;
 		int x = buildings[0][0];
-		while (x <= rightSide) {
-			if (cur < buildings.size() && x == buildings[cur][0]) {
-				maxHeight.push(buildings[cur][2]);
-				height_right[buildings[cur][2]] = buildings[cur][1];
-				cur++;
-			}
-			if (x < height_right[maxHeight.top()]) {
-				height = maxHeight.top();
-				if (pts.empty()) {
-					pts.push_back(make_pair(x, height));
+		while (1) {
+			if (i < buildings.size() && x == buildings[i][0]) {
+				if (heights.empty()) {
+					heights.push(buildings[i][2]);
+					height_right[buildings[i][2]] = buildings[i][1];
+					skyLine.push_back(make_pair(buildings[i][0], buildings[i][2]));
 				}
-				else if (height > preHeight) {
-					if (pts.back().first == x)
-						pts.pop_back();
-					pts.push_back(make_pair(x, height));
+				else {
+					if (buildings[i][2] == heights.top()) {
+						height_right[buildings[i][2]] = max(buildings[i][1], height_right[heights.top()]);
+					}
+					else if (buildings[i][2] > heights.top()) {
+						if (skyLine.back().first == buildings[i][0])
+							skyLine.pop_back();
+						heights.push(buildings[i][2]);
+						height_right[buildings[i][2]] = buildings[i][1];
+						skyLine.push_back(make_pair(buildings[i][0], buildings[i][2]));
+					}
+					else {
+						heights.push(buildings[i][2]);
+						height_right[buildings[i][2]] = max(height_right[buildings[i][2]], buildings[i][1]);
+					}
 				}
+				i++;
 			}
 			else {
-				while (!maxHeight.empty() && height_right[maxHeight.top()] <= x) {
-					maxHeight.pop();
+				while (!heights.empty() && height_right[heights.top()] <= x) {
+					height_right.erase(heights.top());
+					heights.pop();
 				}
-				if (maxHeight.empty()) height = 0;
-				else height = maxHeight.top();
-				if (height != preHeight)
-					pts.push_back(make_pair(x, height));
-			}
-			preHeight = height;
-			if (cur < buildings.size() || !maxHeight.empty()) {
-				if (cur < buildings.size() && !maxHeight.empty())
-					x = min(buildings[cur][0], height_right[maxHeight.top()]);
-				else if (maxHeight.empty())
-					x = buildings[cur][0];
+				if (heights.empty())
+					skyLine.push_back(make_pair(x, 0));
 				else
-					x = height_right[maxHeight.top()];
+					skyLine.push_back(make_pair(x, heights.top()));
 			}
-			else break;
+			if (!heights.empty() && i < buildings.size())
+				x = min(height_right[heights.top()], buildings[i][0]);
+			else if (!heights.empty())
+				x = height_right[heights.top()];
+			else if (i < buildings.size())
+				x = buildings[i][0];
+			else
+				break;
 		}
-		return pts;
+		return skyLine;
 	}
 };
