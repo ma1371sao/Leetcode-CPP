@@ -10,46 +10,20 @@
 class Solution {
 public:
 	TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
-		if (!root || !p || !q)   return NULL;
-		if (p == root) return p;
-		if (q == root) return q;
-		if (p == q)    return p;
-		if (dfs(p, q))  return p;
-		if (dfs(q, p))  return q;
-		vector<TreeNode*> routep;
-		vector<TreeNode*> routeq;
-		findroute(p, routep, root);
-		findroute(q, routeq, root);
-		unordered_map<TreeNode*, bool> hash;
-		for (int i = 0; i<routep.size(); i++)
-			hash[routep[i]] = true;
-		for (int i = 0; i<routeq.size(); i++)
-			if (hash.find(routeq[i]) != hash.end())
-				return routeq[i];
-		return NULL;
+		if (root == p || root == q || root == NULL) return root;
+		TreeNode* LCA = NULL;
+		dfs(root, p, q, LCA);
+		return LCA;
 	}
-	bool dfs(TreeNode* root, TreeNode* t) {
-		if (root == t) return true;
-		if (root->left)
-			if (dfs(root->left, t))
-				return true;
-		if (root->right)
-			if (dfs(root->right, t))
-				return true;
-		return false;
-	}
-	bool findroute(TreeNode* t, vector<TreeNode*>& route, TreeNode* root) {
-		if (root == t) return true;
-		if (root->left)
-			if (findroute(t, route, root->left)) {
-				route.push_back(root);
-				return true;
-			}
-		if (root->right)
-			if (findroute(t, route, root->right)) {
-				route.push_back(root);
-				return true;
-			}
-		return false;
+
+	int dfs(TreeNode* root, TreeNode* p, TreeNode* q, TreeNode* & LCA) {
+		if (root == NULL) return 0;
+		int find = 0;
+		if (root == p || root == q) find++;
+		find += dfs(root->left, p, q, LCA);
+		find += dfs(root->right, p, q, LCA);
+		if (find == 2 && LCA == NULL)
+			LCA = root;
+		return find;
 	}
 };
