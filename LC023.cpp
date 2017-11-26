@@ -7,40 +7,29 @@
 * };
 */
 struct cmp {
-	bool operator() (const ListNode* a, const ListNode* b)
-	{
-		return a->val>b->val;
+	bool operator() (const ListNode* p, const ListNode* q) {
+		return p->val > q->val;
 	}
 };
+
 class Solution {
 public:
 	ListNode* mergeKLists(vector<ListNode*>& lists) {
-		int n = lists.size();
-		if (n == 0)
-			return NULL;
-		priority_queue<ListNode*, vector<ListNode*>, cmp> q;
-		ListNode *p;
-		for (int i = 0; i<n; i++)
-		{
-			p = lists[i];
-			while (p)
-			{
-				q.push(p);
-				p = p->next;
-			}
-		}
-		if (q.empty())
-			return NULL;
-		ListNode *ans = q.top();
-		p = ans;
-		q.pop();
-		while (!q.empty())
-		{
-			p->next = q.top();
-			q.pop();
+		priority_queue<ListNode*, vector<ListNode*>, cmp> pq;
+		ListNode* head = new ListNode(0);
+		int k = lists.size();
+		for (int i = 0; i < k; i++)
+			if (lists[i])
+				pq.push(lists[i]);
+		ListNode* p = head;
+		while (!pq.empty()) {
+			ListNode* top = pq.top();
+			pq.pop();
+			p->next = top;
 			p = p->next;
+			if (pq.empty()) break;
+			if (top->next) pq.push(top->next);
 		}
-		p->next = NULL;
-		return ans;
+		return head->next;
 	}
 };
