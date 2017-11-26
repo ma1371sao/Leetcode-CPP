@@ -1,36 +1,18 @@
 class Solution {
 public:
-	vector<string> ans;
-	int a[1000000];
-	queue<char> q;
 	vector<string> generateParenthesis(int n) {
-		if (n == 0)
-			return ans;
-		DFS(n, 0, 0, 0);
-		return ans;
+		vector<string> res;
+		if (n == 0) return res;
+		dfs(res, "", n, n, 0);
+		return res;
 	}
-	void DFS(int n, int front, int back, int pos)
-	{
-		if (front == n && back == n)
-		{
-			string s;
-			for (int i = 0; i<2 * n; i++)
-				if (a[i] == 1)
-					s.push_back('(');
-				else
-					s.push_back(')');
-			ans.push_back(s);
+
+	void dfs(vector<string>& res, string cur, int left, int right, int pairNum) {
+		if (left == 0 && right == 0 && pairNum == 0) {
+			res.push_back(cur);
 			return;
 		}
-		if (front<n)
-		{
-			a[pos] = 1;
-			DFS(n, front + 1, back, pos + 1);
-		}
-		if (back<front && back<n)
-		{
-			a[pos] = -1;
-			DFS(n, front, back + 1, pos + 1);
-		}
+		if (left > 0) dfs(res, cur + "(", left - 1, right, pairNum + 1);
+		if (right > 0 && pairNum > 0) dfs(res, cur + ")", left, right - 1, pairNum - 1);
 	}
 };
