@@ -1,42 +1,37 @@
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
-	vector<TreeNode*> node;
-	void recoverTree(TreeNode* root) {
-		if (root == NULL)  return;
-		DFS(root);
-		int p[2];
-		int num = 0;
-		for (int i = 0; i<node.size() - 1; i++) {
-			if (node[i]->val>node[i + 1]->val) {
-				p[num] = i;
-				num++;
-			}
-		}
-		if (num == 1) {
-			int tmp = node[p[0]]->val;
-			node[p[0]]->val = node[p[0] + 1]->val;
-			node[p[0] + 1]->val = tmp;
-		}
-		if (num == 2) {
-			int tmp = node[p[0]]->val;
-			node[p[0]]->val = node[p[1] + 1]->val;
-			node[p[1] + 1]->val = tmp;
-		}
-	}
-	void DFS(TreeNode* p) {
-		if (p->left)
-			DFS(p->left);
-		node.push_back(p);
-		if (p->right)
-			DFS(p->right);
-	}
+    void recoverTree(TreeNode* root) {
+        vector<pair<TreeNode*, TreeNode*>> abnNodes;
+        TreeNode *lastNode = NULL;
+        dfs(root, abnNodes, &lastNode);
+        if (abnNodes.size() == 1) {
+            int tmp = abnNodes[0].first->val;
+            abnNodes[0].first->val = abnNodes[0].second->val;
+            abnNodes[0].second->val = tmp;
+        }
+        else if (abnNodes.size() == 2) {
+            int tmp = abnNodes[0].first->val;
+            abnNodes[0].first->val = abnNodes[1].second->val;
+            abnNodes[1].second->val = tmp;
+        }
+    }
+    
+    void dfs(TreeNode *root, vector<pair<TreeNode*, TreeNode*>>& abnNodes, TreeNode **lastNode) {
+        if (root->left)
+            dfs(root->left, abnNodes, lastNode);
+        if (*lastNode != NULL && root->val < (*lastNode)->val)
+            abnNodes.push_back(make_pair(*lastNode, root));
+        *lastNode = root;
+        if (root->right)
+            dfs(root->right, abnNodes, lastNode);
+    }
 };
