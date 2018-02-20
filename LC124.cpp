@@ -1,26 +1,26 @@
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
-	int maxPathSum(TreeNode* root) {
-		int maxSum = INT_MIN;
-		findMaxSum(root, maxSum);
-		return maxSum;
-	}
-	int findMaxSum(TreeNode* root, int& maxSum) {
-		if (root == NULL) return 0;
-		int l = findMaxSum(root->left, maxSum);
-		int r = findMaxSum(root->right, maxSum);
-		if (l < 0) l = 0;
-		if (r < 0) r = 0;
-		if (l + r + root->val > maxSum) maxSum = l + r + root->val;
-		return max(l, r) + root->val;
-	}
+    int maxPathSum(TreeNode* root) {
+        int maxSum = INT_MIN;
+        findMax(root, maxSum);
+        return maxSum;
+    }
+    
+    int findMax(TreeNode *root, int& maxSum) {
+        if (root == NULL) return 0;
+        int maxLeftSum = max(findMax(root->left, maxSum), 0);
+        int maxRightSum = max(findMax(root->right, maxSum), 0);
+        if (maxLeftSum + root->val + maxRightSum > maxSum)
+            maxSum = maxLeftSum + root->val + maxRightSum;
+        return max(maxLeftSum, maxRightSum) + root->val;
+    }
 };
