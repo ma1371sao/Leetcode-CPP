@@ -1,26 +1,18 @@
 class Solution {
 public:
-	int maxProduct(vector<int>& nums) {
-		int tmax = nums[0];
-		int tmin = nums[0];
-		int max = nums[0];
-		for (int i = 1; i<nums.size(); i++) {
-			int tm = tmax;
-			if (tmax*nums[i] >= nums[i])
-				tmax *= nums[i];
-			else
-				tmax = nums[i];
-			if (tmax<tmin*nums[i])
-				tmax = tmin*nums[i];
-			if (tmin*nums[i] <= nums[i])
-				tmin *= nums[i];
-			else
-				tmin = nums[i];
-			if (tm*nums[i]<tmin)
-				tmin = tm*nums[i];
-			if (max<tmax)
-				max = tmax;
-		}
-		return max;
-	}
+    int maxProduct(vector<int>& nums) {
+        if (nums.size() == 0) return 0;
+        int maxPdt = nums[0];
+        int minPdt = nums[0];
+        int res = nums[0];
+        for (int i = 1; i < nums.size(); i++) {
+            int tmpMax = max(nums[i], nums[i] * maxPdt);
+            tmpMax = max(tmpMax, minPdt * nums[i]);
+            minPdt = min(nums[i], nums[i] * minPdt);
+            minPdt = min(minPdt, maxPdt * nums[i]);
+            maxPdt = tmpMax;
+            res = max(res, maxPdt);
+        }
+        return res;
+    }
 };
