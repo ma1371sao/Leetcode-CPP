@@ -1,3 +1,4 @@
+//method1
 class Solution {
 public:
 	int maxProfit(vector<int>& prices, int fee) {
@@ -13,4 +14,19 @@ public:
 		}
 		return sell[prices.size() - 1];
 	}
+};
+
+//method2
+class Solution {
+public:
+    int maxProfit(vector<int>& prices, int fee) {
+        if (prices.size() == 0) return 0;
+        vector<int> maxPf(prices.size(), 0);
+        int pfBefore = -prices[0];
+        for (int i = 1; i < prices.size(); i++) {
+            maxPf[i] = max(maxPf[i - 1], prices[i] + pfBefore - fee);
+            pfBefore = max(pfBefore, maxPf[i - 1] - prices[i]);
+        }
+        return maxPf[prices.size() - 1];
+    }
 };
