@@ -10,9 +10,8 @@
 class Solution {
 public:
     int rob(TreeNode* root) {
-        if (root == NULL) return 0;
         vector<int> maxRob = dfs(root);
-        return maxRob[1];
+        return max(maxRob[0], maxRob[1]);
     }
     
     vector<int> dfs(TreeNode* root) {
@@ -22,7 +21,7 @@ public:
         }
         vector<int> maxRob_l = dfs(root->left);
         vector<int> maxRob_r = dfs(root->right);
-        vector<int> maxRob(2);
+        vector<int> maxRob(2); //0: not include root; 1: include
         maxRob[0] = maxRob_l[1] + maxRob_r[1];
         maxRob[1] = max(root->val + maxRob_l[0] + maxRob_r[0], maxRob[0]);
         return maxRob;
