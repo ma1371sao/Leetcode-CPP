@@ -1,3 +1,4 @@
+//loop
 class Solution {
 public:
 	bool isValidSerialization(string preorder) {
@@ -27,4 +28,35 @@ public:
 		if (st.empty())  return true;
 		return false;
 	}
+};
+
+//recursion
+class Solution {
+public:
+    bool isValidSerialization(string preorder) {
+        if (preorder.length() == 0) return false;
+        if (!dfs(preorder)) return false;
+        if (preorder != "") return false;
+        return true;
+    }
+    
+    bool dfs(string& preorder) {
+        if (preorder == "") return false;
+        string s;
+        int pos = preorder.find(',');
+        if (pos != string::npos) {
+            s = preorder.substr(0, pos);
+            preorder = preorder.substr(pos + 1);
+        }
+        else {
+            s = preorder;
+            preorder = "";
+        }
+        if (s == "#") return true;
+        else {
+            if (!dfs(preorder)) return false;
+            if (!dfs(preorder)) return false;
+        }
+        return true;
+    }
 };
