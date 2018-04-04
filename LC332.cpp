@@ -1,50 +1,37 @@
 class Solution {
 public:
-	unordered_map<string, int> vertex;
-	unordered_map<int, string> number;
-	int E[1000][1000];
-	int n;
-	vector<string> ans;
-	vector<string> v;
-	vector<string> findItinerary(vector<pair<string, string>> tickets) {
-		if (tickets.size() == 0)    return ans;
-		ans.push_back("JFK");
-		v.push_back("JFK");
-		int index = 0;
-		vertex["JFK"] = index++;
-		for (int i = 0; i<tickets.size(); i++) {
-			if (vertex.find(tickets[i].first) == vertex.end()) {
-				vertex[tickets[i].first] = index++;
-				v.push_back(tickets[i].first);
-			}
-			if (vertex.find(tickets[i].second) == vertex.end()) {
-				vertex[tickets[i].second] = index++;
-				v.push_back(tickets[i].second);
-			}
-		}
-		n = index;
-		sort(v.begin(), v.end());
-		for (int i = 0; i<n; i++) {
-			vertex[v[i]] = i;
-			number[i] = v[i];
-		}
-		for (int i = 0; i<tickets.size(); i++)
-			E[vertex[tickets[i].first]][vertex[tickets[i].second]]++;
-		DFS(tickets, 0, vertex["JFK"]);
-		return ans;
-	}
-	bool DFS(vector<pair<string, string>>& tickets, int num, int pos) {
-		if (num == tickets.size())
-			return true;
-		for (int i = 0; i<n; i++)
-			if (E[pos][i]>0) {
-				ans.push_back(number[i]);
-				E[pos][i]--;
-				if (DFS(tickets, num + 1, i))
-					return true;
-				ans.pop_back();
-				E[pos][i]++;
-			}
-		return false;
-	}
+    vector<string> findItinerary(vector<pair<string, string>> tickets) {
+        vector<string> itinerary;
+        unordered_map<string, vector<string>> from_to;
+        unordered_map<string, int> ticket_num;
+        for (auto it : tickets) {
+            from_to[it.first].push_back(it.second);
+            ticket_num[it.first + it.second]++;
+        }
+        for (auto it = from_to.begin(); it != from_to.end(); it++)
+            sort(it->second.begin(), it->second.end());
+        itinerary.push_back("JFK");
+        dfs(itinerary, from_to, ticket_num, tickets.size());
+        return itinerary;
+    }
+    
+    bool dfs(vector<string>& itinerary, unordered_map<string, vector<string>>& from_to, 
+             unordered_map<string, int>& ticket_num, int total) {
+        if (total == 0) return true;
+        string from = itinerary.back();
+        if (from_to.find(from) == from_to.end()) return false;
+        for (int i = 0; i < from_to[from].size(); i++) {
+            string to = from_to[from][i];
+            if (ticket_num[from + to] > 0) {
+                ticket_num[from + to]--;
+                itinerary.push_back(to);
+                if (dfs(itinerary, from_to, ticket_num, total - 1)) return true;
+                else {
+                    ticket_num[from + to]++;
+                    itinerary.pop_back();
+                }
+            }
+        }
+        return false;
+    }
 };
