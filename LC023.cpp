@@ -1,35 +1,31 @@
 /**
-* Definition for singly-linked list.
-* struct ListNode {
-*     int val;
-*     ListNode *next;
-*     ListNode(int x) : val(x), next(NULL) {}
-* };
-*/
-struct cmp {
-	bool operator() (const ListNode* p, const ListNode* q) {
-		return p->val > q->val;
-	}
-};
-
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 class Solution {
 public:
-	ListNode* mergeKLists(vector<ListNode*>& lists) {
-		priority_queue<ListNode*, vector<ListNode*>, cmp> pq;
-		ListNode* head = new ListNode(0);
-		int k = lists.size();
-		for (int i = 0; i < k; i++)
-			if (lists[i])
-				pq.push(lists[i]);
-		ListNode* p = head;
-		while (!pq.empty()) {
-			ListNode* top = pq.top();
-			pq.pop();
-			p->next = top;
-			p = p->next;
-			if (pq.empty()) break;
-			if (top->next) pq.push(top->next);
-		}
-		return head->next;
-	}
+    struct cmp {
+       bool operator() (ListNode* a, ListNode* b) {
+           return a->val > b->val;
+       } 
+    };
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        priority_queue<ListNode*, vector<ListNode*>, cmp> pq;
+        for (auto p : lists)
+            if (p)
+                pq.push(p);
+        ListNode* preHead = new ListNode(0);
+        ListNode* p = preHead;
+        while (!pq.empty()) {
+            p->next = pq.top();
+            pq.pop();
+            p = p->next;
+            if (p->next) pq.push(p->next);
+        }
+        return preHead->next;
+    }
 };
