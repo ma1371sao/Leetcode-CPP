@@ -1,50 +1,50 @@
 class Solution {
 public:
-	vector<int> findSubstring(string s, vector<string>& words) {
-		vector<int> ans;
-		if (s.length() == 0)
-			return ans;
-		if (words.size() == 0 || words[0].length() == 0)
-			return ans;
-		map<string, int> mp;
-		int n, m, l;
-		n = words.size();
-		m = words[0].length();
-		l = s.length();
-		int tl = n*m;
-		if (tl>l)
-			return ans;
-		int flag = 1;
-		for (int i = 0; i<n; i++)
-			mp[words[i]]++;
-		for (int i = 0; i<l - tl + 1; i++)
-		{
-			map<string, int> mm(mp);
-			flag = 1;
-			int num = 0;
-			int sublen = i + tl;
-			for (int k = i; k<sublen && flag; k = k + m)
-			{
-				string ss = s.substr(k, m);
-				if (mp.find(ss) == mp.end())
-				{
-					flag = 0;
-					break;
-				}
-				else
-				{
-					mm[ss]--;
-					num++;
-					if (mm[ss]<0)
-					{
-						flag = 0;
-						break;
-					}
-				}
-			}
-			if (flag && num == n)
-				ans.push_back(i);
-		}
-		return ans;
-	}
+    vector<int> findSubstring(string s, vector<string>& words) {
+        vector<int> res;
+        if (words.size() == 0) return res;
+        int l = s.length();
+        int wl = words[0].length();
+        int l_sub = wl * words.size();
+        unordered_map<string, int> word_num;
+        for (auto word : words) 
+            word_num[word]++;
+        for (int i = 0; i < wl && i + l_sub <= l; i++) {
+            int count = 0;
+            int start = i;
+            unordered_map<string, int> word_count;
+            for (int j = i; j + wl <= l; j += wl) {
+                string sub = s.substr(j, wl);
+                if (word_num.find(sub) != word_num.end()) {
+                    word_count[sub]++;
+                    count++;
+                    if (word_count[sub] <= word_num[sub]) {
+                        if (count == words.size()) {
+                            res.push_back(start);
+                            string startWord = s.substr(start, wl);
+                            word_count[startWord]--;
+                            count--;
+                            start += wl;
+                        }
+                    }
+                    else {
+                        while (s.substr(start, wl) != sub) {
+                            word_count[s.substr(start, wl)]--;
+                            count--;
+                            start += wl;
+                        }
+                        word_count[s.substr(start, wl)]--;
+                        start += wl;
+                        count--;
+                    }
+                }
+                else {
+                    start = j + wl;
+                    count = 0;
+                    word_count.clear();
+                }
+            }
+        }
+        return res;
+    }
 };
