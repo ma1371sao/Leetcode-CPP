@@ -1,37 +1,28 @@
 class Solution {
 public:
-	vector<int> searchRange(vector<int>& nums, int target) {
-		vector<int> ans;
-		int left = 0;
-		int right = nums.size() - 1;
-		int mid;
-		while (left <= right)
-		{
-			mid = left + (right - left) / 2;
-			if (nums[mid] == target)
-				break;
-			if (nums[mid]<target)
-			{
-				left = mid + 1;
-			}
-			else
-			{
-				right = mid - 1;
-			}
-		}
-		if (nums[mid] == target)
-		{
-			int end, start;
-			for (end = mid; end <= right && nums[end] == target; end++);
-			end--;
-			for (start = mid; start >= left && nums[start] == target; start--);
-			start++;
-			ans.push_back(start);
-			ans.push_back(end);
-			return ans;
-		}
-		ans.push_back(-1);
-		ans.push_back(-1);
-		return ans;
-	}
+    vector<int> searchRange(vector<int>& nums, int target) {
+        vector<int> res(2, -1);
+        int l = 0;
+        int r = nums.size() - 1;
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            if (nums[mid] >= target)
+                r = mid - 1;
+            else
+                l = mid + 1;
+        }
+        if (l >= 0 && l < nums.size() && nums[l] == target) res[0] = l;
+        else return res;
+        l = 0;
+        r = nums.size() - 1;
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            if (nums[mid] > target)
+                r = mid - 1;
+            else
+                l = mid + 1;
+        }
+        res[1] = r;
+        return res;
+    }
 };
