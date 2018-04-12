@@ -1,24 +1,20 @@
 class Solution {
 public:
-	vector<vector<int>> subsets(vector<int>& nums) {
-		int n = nums.size();
-		vector<vector<int>> ans;
-		int a[1000000];
-		DFS(nums, n, 0, ans, 0, a);
-		return ans;
-	}
-	void DFS(vector<int>& nums, int n, int pos, vector<vector<int>>& ans, int num, int *a)
-	{
-		if (pos == n)
-		{
-			vector<int> v;
-			for (int i = 0; i<num; i++)
-				v.push_back(a[i]);
-			ans.push_back(v);
-			return;
-		}
-		a[num] = nums[pos];
-		DFS(nums, n, pos + 1, ans, num + 1, a);
-		DFS(nums, n, pos + 1, ans, num, a);
-	}
+    vector<vector<int>> subsets(vector<int>& nums) {
+        vector<vector<int>> res;
+        vector<int> v;
+        findSubsets(res, v, nums, 0);
+        return res;
+    }
+    
+    void findSubsets(vector<vector<int>>& res, vector<int>& v, vector<int>& nums, int pos) {
+        if (pos >= nums.size()) {
+            res.push_back(v);
+            return;
+        }
+        findSubsets(res, v, nums, pos + 1);
+        v.push_back(nums[pos]);
+        findSubsets(res, v, nums, pos + 1);
+        v.pop_back();
+    }
 };
