@@ -1,27 +1,22 @@
 class Solution {
 public:
-	vector<vector<int>> ans;
-	unordered_map<string, int> m;
-	vector<vector<int>> subsetsWithDup(vector<int>& nums) {
-		int n = nums.size();
-		if (!n)  return ans;
-		sort(nums.begin(), nums.end());
-		DFS(nums, 0, "");
-		return ans;
-	}
-	void DFS(vector<int>& nums, int pos, string subset) {
-		if (pos == nums.size()) {
-			if (m[subset] == 0) {
-				m[subset] = 1;
-				vector<int> v;
-				for (int i = 0; i<subset.length(); i++)
-					v.push_back(subset[i] - '0');
-				ans.push_back(v);
-			}
-			return;
-		}
-		DFS(nums, pos + 1, subset);
-		char c = '0' + nums[pos];
-		DFS(nums, pos + 1, subset + c);
-	}
+    vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+        vector<vector<int>> res;
+        vector<int> v;
+        res.push_back(v);
+        sort(nums.begin(), nums.end());
+        for (int i = 0; i < nums.size(); i++) {
+            int count = 1;
+            for (; i + 1 < nums.size(), nums[i] == nums[i + 1]; i++, count++);
+            int k = res.size();
+            for (int j = 0; j < k; j++) {
+                vector<int> sub = res[j];
+                for (int c = 0; c < count; c++) {
+                    sub.push_back(nums[i]);
+                    res.push_back(sub);
+                }
+            }
+        }
+        return res;
+    }
 };
