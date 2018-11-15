@@ -1,89 +1,57 @@
 class Solution {
 public:
-	string longestPalindrome(string s) {
-		int l = s.length();
-		int mid;
-		string ans;
-		int left = 0;
-		int right = l - 1;
-		int ans_start = 0;
-		int ans_length = 0;
-		for (int lp = 0; lp<l; lp++)
-		{
-			if ((right - lp + 1) % 2 == 1)
-			{
-				mid = lp + (right - lp) / 2;
-				int num = 1;
-				for (int i = 1; mid + i<l; i++)
-					if (s[mid + i] == s[mid - i])
-						num += 2;
-					else
-						break;
-				if (num>ans_length)
-				{
-					ans_length = num;
-					ans_start = mid - (num - 1) / 2;
-				}
-			}
-			if ((right - lp + 1) % 2 == 0)
-			{
-				int num;
-				mid = lp + (right - lp - 1) / 2;
-				if (s[mid] == s[mid + 1])
-				{
-					num = 2;
-					for (int i = 1; mid + 1 + i<l; i++)
-						if (s[mid + 1 + i] == s[mid - i])
-							num = num + 2;
-						else
-							break;
-					if (num>ans_length)
-					{
-						ans_length = num;
-						ans_start = mid - (num - 2) / 2;
-					}
-				}
-			}
-		}
-		for (int rp = l - 1; rp >= 0; rp--)
-		{
-			if ((rp - left + 1) % 2 == 1)
-			{
-				mid = left + (rp - left) / 2;
-				int num = 1;
-				for (int i = 1; mid - i >= 0; i++)
-					if (s[mid + i] == s[mid - i])
-						num = num + 2;
-					else
-						break;
-				if (num>ans_length)
-				{
-					ans_length = num;
-					ans_start = mid - (num - 1) / 2;
-				}
-			}
-			if ((rp - left + 1) % 2 == 0)
-			{
-				int num;
-				mid = left + (rp - left - 1) / 2;
-				if (s[mid] == s[mid + 1])
-				{
-					num = 2;
-					for (int i = 1; mid - i >= 0; i++)
-						if (s[mid + 1 + i] == s[mid - i])
-							num = num + 2;
-						else
-							break;
-					if (num>ans_length)
-					{
-						ans_length = num;
-						ans_start = mid - (num - 2) / 2;
-					}
-				}
-			}
-		}
-		for (int i = 0; i<ans_length; i++)
-			ans.push_back(s[ans_start + i]);
-		return ans;
-	}
+    string longestPalindrome(string s) {
+        if (s.length() == 0) return "";
+        int left = 0;
+        int right = s.length() - 1;
+        int maxLen = 0;
+        int start = 0;
+        for (int l = left; l <= right; l++) {
+            int mid = l + (right - l)/2;
+            if (right - l + 1 <= maxLen)
+                break;
+            if ((right - l + 1) % 2) {
+                int half = 0;
+                for (; mid + half < s.length() && mid - half >= l && s[mid + half] == s[mid - half]; half++);
+                half--;
+                if (half * 2 + 1 > maxLen) {
+                    maxLen = half * 2 + 1;
+                    start = mid - half;
+                }
+            }
+            else {
+                int half = 0;
+                for (; mid + 1 + half < s.length() && mid - half >= l && s[mid + 1 + half] == s[mid - half]; half++);
+                half--;
+                if (half * 2 + 2 > maxLen) {
+                    maxLen = half * 2 + 2;
+                    start = mid - half;
+                }
+            }
+        }
+        for (int r = right; r >= left; r--) {
+            int mid = left + (r - left) / 2;
+            if (r - left + 1 <= maxLen)
+                break;
+            if ((r - left + 1) % 2) {
+                int half = 0;
+                for (; mid - half >= left && mid + half <= r && s[mid + half] == s[mid - half]; half++);
+                half--;
+                if (half * 2 + 1 > maxLen) {
+                    maxLen = half * 2 + 1;
+                    start = mid - half;
+                }
+            }
+            else {
+                int half = 0;
+                for (; mid + 1 + half <= r && mid - half >= left && s[mid + 1 + half] == s[mid - half]; half++);
+                half--;
+                if (half * 2 + 2 > maxLen) {
+                    maxLen = half * 2 + 2;
+                    start = mid - half;
+                }
+            }
+        }
+        return s.substr(start, maxLen);
+    }
 };
