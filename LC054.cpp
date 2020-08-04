@@ -2,48 +2,21 @@ class Solution {
 public:
     vector<int> spiralOrder(vector<vector<int>>& matrix) {
         vector<int> res;
-        int r = matrix.size();
-        if (r == 0) return res;
-        int c = matrix[0].size();
-        vector<vector<bool>> visit(r, vector<bool>(c, false));
-        int direction = 0;
-        int i = 0;
-        int j = 0;
-        res.push_back(matrix[0][0]);
-        visit[0][0] = true;
-        while (res.size() < r * c) {
-            if (direction == 0) {
-                if (j + 1 < c && !visit[i][j + 1]) {
-                    j++;
-                    res.push_back(matrix[i][j]);
-                    visit[i][j] = true;
-                }
-                else direction = 1;
-            }
-            else if (direction == 1) {
-                if (i + 1 < r && !visit[i + 1][j]) {
-                    i++;
-                    res.push_back(matrix[i][j]);
-                    visit[i][j] = true;
-                }
-                else direction = 2;
-            }
-            else if (direction == 2) {
-                if (j - 1 >= 0 && !visit[i][j - 1]) {
-                    j--;
-                    res.push_back(matrix[i][j]);
-                    visit[i][j] = true;
-                }
-                else direction = 3;
-            }
-            else if (direction == 3) {
-                if (i - 1 >= 0 && !visit[i - 1][j]) {
-                    i--;
-                    res.push_back(matrix[i][j]);
-                    visit[i][j] = true;
-                }
-                else direction = 0;
-            }
+        int row = matrix.size();
+        if (row == 0) return res;
+        int col = matrix[0].size();
+        
+        int level = 0;
+        while (res.size() < row * col) {
+            for (int c = level; res.size() < row * col && c < col - level; c++)
+                res.push_back(matrix[level][c]);
+            for (int r = level + 1; res.size() < row * col && r < row - level; r++)
+                res.push_back(matrix[r][col - 1 - level]);
+            for (int c = col - 2 - level; res.size() < row * col && c >= level; c--)
+                res.push_back(matrix[row - 1 - level][c]);
+            for (int r = row - 2 - level; res.size() < row * col && r > level; r--)
+                res.push_back(matrix[r][level]);
+            level++;
         }
         return res;
     }
