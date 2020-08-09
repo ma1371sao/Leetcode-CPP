@@ -1,32 +1,38 @@
 class Solution {
 public:
-	vector<vector<string>> partition(string s) {
-		vector<vector<string>> res;
-		if (s.length() == 0)   return res;
-		vector<string> v;
-		dfs(s, res, v);
-		return res;
-	}
-	void dfs(string s, vector<vector<string>>& res, vector<string>& v) {
-		if (s.length() == 0) {
-			res.push_back(v);
-			return;
-		}
-		for (int i = 0; i<s.length(); i++) {
-			if (isPal(s.substr(0, i + 1))) {
-				v.push_back(s.substr(0, i + 1));
-				dfs(s.substr(i + 1), res, v);
-				v.pop_back();
-			}
-		}
-	}
-	bool isPal(string s) {
-		int n = s.length();
-		if (n == 1)    return true;
-		int i, j;
-		for (i = 0, j = n - 1; i <= j; i++, j--)
-			if (s[i] != s[j])
-				return false;
-		return true;
-	}
+    vector<vector<string>> partition(string s) {
+        vector<vector<string>> ans;
+        int n = s.length();
+        if (n == 0) return ans;
+        
+        vector<string> part;
+        dfs(s, 0, ans, part);
+        return ans;
+    }
+    
+    void dfs(string& s, int start, vector<vector<string>>& ans, vector<string>& part) {
+        if (start == s.length()) {
+            ans.push_back(part);
+            return;
+        }
+        
+        for (int i = start; i < s.length(); i++) {
+            string first = s.substr(start, i - start + 1);
+            if (isPalm(first)) {
+                part.push_back(first);
+                dfs(s, i + 1, ans, part);
+                part.pop_back();
+            }
+        }
+    }
+    
+    bool isPalm(string& s) {
+        int i = 0, j = s.length() - 1;
+        while (i <= j) {
+            if (s[i] != s[j]) return false;
+            i++;
+            j--;
+        }
+        return true;
+    }
 };
