@@ -6,7 +6,33 @@
 *  TreeLinkNode(int x) : val(x), left(NULL), right(NULL), next(NULL) {}
 * };
 */
-class Solution {
+class Solution1 {
+public:
+    Node* connect(Node* root) {
+        if (!root) return NULL;
+        Node* p = root;
+        Node* nxtLvFirstNd = NULL;
+        Node* pre = NULL;
+        while (p) {
+            if (p->left) {
+                if (!nxtLvFirstNd) nxtLvFirstNd = p->left;
+                p->left->next = p->right;
+                if (pre) pre->next = p->left;
+                pre = p->right;
+            }
+            
+            if (p->next) p = p->next;
+            else {
+                p = nxtLvFirstNd;
+                nxtLvFirstNd = NULL;
+                pre = NULL;
+            }
+        }
+        return root;
+    }
+};
+
+class Solution2 {
 public:
 	void connect(TreeLinkNode *root) {
 		if (root == NULL) return;
