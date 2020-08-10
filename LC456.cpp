@@ -1,16 +1,23 @@
 class Solution {
 public:
-	bool find132pattern(vector<int>& nums) {
-		if (nums.size() < 3) return false;
-		int first = 0, second, third;
-		while (first < nums.size() - 2) {
-			for (; first < nums.size() - 2 && nums[first] >= nums[first + 1]; first++);
-			for (second = first + 1; second < nums.size() - 1 && nums[second] <= nums[second + 1]; second++);
-			third = second + 1;
-			for (; third < nums.size() && !(nums[third] > nums[first] && nums[third] < nums[second]); third++);
-			if (third < nums.size()) return true;
-			first = second + 1;
-		}
-		return false;
-	}
+    bool find132pattern(vector<int>& nums) {
+        if (nums.size() < 3) return false;
+        
+        set<int, greater<int>> nSet;
+        vector<int> leftMin(nums.size());
+        int minNum = nums[0];
+        for (int i = 1; i < nums.size(); i++) {
+            leftMin[i] = minNum;
+            minNum = min(nums[i], minNum);
+        }
+        
+        nSet.insert(nums[nums.size() - 1]);
+        for (int i = nums.size() - 2; i > 0; i--) {
+            if (nSet.upper_bound(nums[i]) != nSet.end())
+                if (*(nSet.upper_bound(nums[i])) > leftMin[i])
+                    return true;
+            nSet.insert(nums[i]);
+        }
+        return false;
+    }
 };
