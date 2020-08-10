@@ -1,29 +1,32 @@
 /**
-* Definition for a binary tree node.
-* struct TreeNode {
-*     int val;
-*     TreeNode *left;
-*     TreeNode *right;
-*     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-* };
-*/
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 class Solution {
 public:
-	TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
-		if (root == p || root == q || root == NULL) return root;
-		TreeNode* LCA = NULL;
-		dfs(root, p, q, LCA);
-		return LCA;
-	}
-
-	int dfs(TreeNode* root, TreeNode* p, TreeNode* q, TreeNode* & LCA) {
-		if (root == NULL) return 0;
-		int find = 0;
-		if (root == p || root == q) find++;
-		find += dfs(root->left, p, q, LCA);
-		find += dfs(root->right, p, q, LCA);
-		if (find == 2 && LCA == NULL)
-			LCA = root;
-		return find;
-	}
+    TreeNode* lca;
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        if (!root) return NULL;
+        lca = NULL;
+        dfs(root, p, q);
+        return lca;
+    }
+    
+    int dfs(TreeNode* root, TreeNode* p, TreeNode* q) {
+        if (!root) return 0;
+        int count = 0;
+        if (root->val == p->val || root->val == q->val) count = 1;
+        int left = dfs(root->left, p, q);
+        if (lca) return 2;
+        int right = dfs(root->right, p, q);
+        if (lca) return 2;
+        if (count + left + right == 2)
+            lca = root;
+        return left + right + count;
+    }
 };
