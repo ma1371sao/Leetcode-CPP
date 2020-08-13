@@ -1,54 +1,74 @@
 class Solution {
 public:
     vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
-        vector<vector<string>> res;
-        unordered_set<string> wordSet(wordList.begin(), wordList.end());
-        if (wordSet.find(endWord) == wordSet.end()) return res;
-        if (beginWord == endWord) {
-            vector<string> path(1, beginWord);
-            res.push_back(path);
-            return res;
+        vector<vector<string>> ans;
+        wordList.push_back(beginWord);
+        int n = wordList.size();
+        int beginIdx = n - 1;
+        int endIdx = -1;
+        unordered_map<int, vector<int>> adj;
+        unordered_map<string, int> wordIdx;
+        
+        for (int i = 0; i < n; i++) {
+            if (wordList[i] == endWord) {
+                endIdx = i;
+            }
+            wordIdx[wordList[i]] = i;
         }
-        if (wordSet.find(beginWord) != wordSet.end()) wordSet.erase(beginWord);
-        unordered_map<string, vector<pair<string, int>>> parents;
-        queue<pair<string, int>> q;
-        q.push(make_pair(beginWord, 0));
-        int minLen = INT_MAX;
-        while (!q.empty()) {
-            string s = q.front().first;
-            int depth = q.front().second;
-            q.pop();
-            if (minLen < depth) break;
-            if (s == endWord) minLen = depth;
-            for (int i = 0; i < s.length(); i++) {
-                string tmp = s;
-                for (int j = 0; j < 26; j++) {
-                    tmp[i] = 'a' + j;
-                    if (wordSet.find(tmp) != wordSet.end()) {
-                        q.push(make_pair(tmp, depth + 1));
-                        wordSet.erase(tmp);
-                        parents[tmp].push_back(make_pair(s, depth));
+        if (endIdx == -1) return ans;
+        
+        for (int i = 0; i < n; i++) {
+            int len = wordList[0].length();
+            for (int j = 0; j < len; j++) {
+                for (int k = 0; k < 26; k++) {
+                    string s = wordList[i];
+                    s[j] = 'a' + k;
+                    if (wordIdx.count(s)) {
+                        adj[i].push_back(wordIdx[s]);
                     }
-                    else if (parents.find(tmp) != parents.end() && parents[tmp][0].second == depth)
-                        parents[tmp].push_back(make_pair(s, depth));
                 }
             }
         }
-        if (minLen == INT_MAX) return res;
-        vector<string> path(minLen + 1);
-        dfs(endWord, beginWord, minLen, parents, res, path);
-        return res;
+        
+        queue<int> q;
+        q.push(beginIdx);
+        int minDeep = INT_MAX;
+        vector<int> dist(n, -1);
+        dist[beginIdx] = 0;
+        while (!q.empty()) {
+            int idx = q.front();
+            int deep = dist[idx];
+            if (idx == endIdx) minDeep = deep;
+            if (deep > minDeep) break;
+            q.pop();
+            for (int i : adj[idx]) {
+                if (dist[i] == -1) {
+                    q.push(i);
+                    dist[i] = deep + 1;
+                }
+            }
+        }
+        
+        vector<string> curPath;
+        curPath.push_back(wordList[beginIdx]);
+        dfs(beginIdx, wordList, adj, ans, dist, curPath, endIdx);
+        return ans;
     }
     
-    void dfs(string curWord, string& beginWord, int restLen, unordered_map<string, vector<pair<string, int>>>& parents,
-             vector<vector<string>>& res, vector<string>& path) {
-        path[restLen] = curWord;
-        if (restLen == 0) {
-            res.push_back(path);
+    void dfs(int idx, vector<string>& wordList, unordered_map<int, vector<int>>& adj, vector<vector<string>>& ans, 
+             vector<int>& dist, vector<string>& curPath, int endIdx) {
+        
+        if (idx == endIdx) {
+            ans.push_back(curPath);
             return;
         }
-        for (int i = 0; i < parents[curWord].size() && parents[curWord][i].second < restLen; i++) {
-            dfs(parents[curWord][i].first, beginWord, restLen - 1, parents, res, path);
+        
+        for (int i : adj[idx]) {
+            if (dist[i] == dist[idx] + 1) {
+                curPath.push_back(wordList[i]);
+                dfs(i, wordList, adj, ans, dist, curPath, endIdx);
+                curPath.pop_back();
+            }
         }
     }
 };
