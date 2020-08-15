@@ -7,7 +7,68 @@
 *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
 * };
 */
-class Codec {
+//DFS
+class Codec1 {
+public:
+
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        string s = "";
+        preorder(root, s);
+        return s;
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        if (data == "" || data == "# ") return NULL;
+        int idx = data.find(" ");
+        int d = stoul(data.substr(0, idx), nullptr, 10);
+        TreeNode* root = new TreeNode(d);
+        dPreorder(root, data, idx + 1);
+        return root;
+    }
+    
+    void preorder(TreeNode* root, string& s) {
+        if (!root) {
+            s += "# ";
+            return;
+        }
+        s += to_string(root->val) + " ";
+        preorder(root->left, s);
+        preorder(root->right, s);
+    }
+    
+    int dPreorder(TreeNode* root, string& data, int i) {
+        if (i == data.length()) return i;
+        int idx = data.find(" ", i);
+        if (data.substr(i, idx - i) != "#") {
+            int d = stoul(data.substr(i, idx - i), nullptr, 10);
+            root->left = new TreeNode(d);
+            i = dPreorder(root->left, data, idx + 1);
+            
+            idx = data.find(" ", i);
+            if (data.substr(i, idx - i) != "#") {
+                int d = stoul(data.substr(i, idx - i), nullptr, 10);
+                root->right = new TreeNode(d);
+                return dPreorder(root->right, data, idx + 1);
+            } else
+                return idx + 1;
+        } else {
+            i = idx + 1;
+            idx = data.find(" ", i);
+            if (data.substr(i, idx - i) != "#") {
+                int d = stoul(data.substr(i, idx - i), nullptr, 10);
+                root->right = new TreeNode(d);
+                return dPreorder(root->right, data, idx + 1);
+            } else
+                return idx + 1;
+        }
+        return i;
+    }
+};
+
+//BFS
+class Codec2 {
 public:
 
 	// Encodes a tree to a single string.
