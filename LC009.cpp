@@ -1,25 +1,25 @@
 class Solution {
 public:
-	bool isPalindrome(int x) {
-		string s;
-		int a, b = x;
-		if (x<0)
-			return false;
-		do
-		{
-			a = b % 10;
-			s.push_back(a + 48);
-			b = b / 10;
-		} while (b);
-		int l = s.size();
-		int reserve = 0;
-		for (int i = 0; i<l; i++)
-		{
-			reserve = reserve * 10 + s[i] - 48;
-		}
-		if (reserve == x)
-			return true;
-		else
-			return false;
-	}
+    bool isPalindrome(int x) {
+        if (x < 0) return false;
+        if (x < 10) return true;
+        long long i = 0;
+        queue<int> q;
+        long long y = x;
+        while (y) {
+            q.push(y % 10);
+            y /= 10;
+            if (i == 0) i = 1;
+            else i *= 10;
+        }
+        
+        y = 0;
+        while (!q.empty()) {
+            y += q.front() * i;
+            i /= 10;
+            q.pop();
+        }
+        if (x == y) return true;
+        return false;
+    }
 };
