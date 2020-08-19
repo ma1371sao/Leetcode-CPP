@@ -1,29 +1,34 @@
 class Solution {
 public:
-	vector<string> ans;
-	vector<string> restoreIpAddresses(string s) {
-		int n = s.length();
-		if (n<4 || n>12) return ans;
-		DFS(0, "", s, 0);
-		return ans;
-	}
-	void DFS(int pos, string sub, string s, int k) {
-		if (pos == s.length() && k == 4) {
-			sub.pop_back();
-			ans.push_back(sub);
-			return;
-		}
-		else if (pos == s.length()) return;
-		for (int num = 1; num <= 3; num++) {
-			if (pos + num <= s.length())
-				if (num == 1 || (num>1 && s[pos] != '0')) {
-					int tmp = 0;
-					int t = 0;
-					for (int j = pos + num - 1; j >= pos; j--)
-						tmp = tmp + (s[j] - '0')*pow(10, t++);
-					if (tmp <= 255)
-						DFS(pos + num, sub + s.substr(pos, num) + ".", s, k + 1);
-				}
-		}
-	}
+    vector<string> restoreIpAddresses(string s) {
+        vector<string> ans;
+        dfs(s, 0, ans, "", 0);
+        return ans;
+    }
+    
+    void dfs(string s, int num, vector<string>& ans, string ip, int start) {
+        if (num == 4 && start == s.length()) {
+            ans.push_back(ip);
+            return;
+        } else if (num == 4) return;
+        else if (start == s.length()) return;
+        
+        if (s[start] == '0')  {
+            if (num == 0)
+                dfs(s, num + 1, ans, ip + "0", start + 1);
+            else
+                dfs(s, num + 1, ans, ip + ".0", start + 1);
+        } else {
+            for (int i = 0; i < 3 && start + i < s.length(); i++) {
+                string sub = s.substr(start, i + 1);
+                int d = stoi(sub);
+                if (d <= 255) {
+                    if (num == 0)
+                        dfs(s, num + 1, ans, ip + sub, start + i + 1);
+                    else
+                        dfs(s, num + 1, ans, ip + "." + sub, start + i + 1);
+                }
+            }
+        }
+    }
 };
